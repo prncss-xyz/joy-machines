@@ -1,0 +1,10 @@
+{
+	"$schema": "https://unpkg.com/knip@5/schema.json",
+	"ignoreFiles": [],
+	"ignoreDependencies": [
+		"@commitlint/cli",
+		"@typescript/native-preview",
+		"bumpp"
+	],
+	"exclude": ["types"]
+}

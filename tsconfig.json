@@ -1,21 +1,21 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
+	"compilerOptions": {
+		"target": "esnext",
 		"lib": ["ES2023", "DOM", "DOM.Iterable", "DOM.AsyncIterable"],
-    "moduleDetection": "force",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "resolveJsonModule": true,
-    "types": ["node"],
-    "strict": true,
-    "noUnusedLocals": true,
-    "declaration": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
+		"moduleDetection": "force",
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+		"resolveJsonModule": true,
+		"types": ["node"],
+		"strict": true,
+		"noUnusedLocals": true,
+		"declaration": true,
+		"noEmit": true,
+		"allowImportingTsExtensions": true,
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
 		"erasableSyntaxOnly": true,
-    "skipLibCheck": true
-  }
+		"skipLibCheck": true
+	}
 }
