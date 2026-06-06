@@ -1,12 +1,12 @@
 import { atom, createStore } from 'jotai/vanilla'
 import { describe, test, expect } from 'vite-plus/test'
-import { choreMachine } from './coreMachine.ts'
+import { coreMachine } from './coreMachine.ts'
 
 describe('core machine', () => {
 	test('initial state', () => {
 		const store = createStore()
-		const o = choreMachine('idle', () => {})
-		expect(store.get(o.machine)).toBe('idle')
+		const o = coreMachine('idle', () => {})
+		expect(store.get(o)).toBe('idle')
 	})
 
 	test('transitions to new state when return value is defined and not undefined', () => {
@@ -15,52 +15,52 @@ describe('core machine', () => {
 			START: void
 			STOP: void
 		}
-		const o = choreMachine<Events, 'idle' | 'running'>('idle', (e, state) => {
+		const o = coreMachine<Events, 'idle' | 'running'>('idle', (e, state) => {
 			if (e.type === 'START' && state === 'idle') return 'running'
 			if (e.type === 'STOP' && state === 'running') return 'idle'
 		})
 
-		expect(store.get(o.machine)).toBe('idle')
+		expect(store.get(o)).toBe('idle')
 
 		// Dispatch START
-		store.set(o.machine, 'START')
-		expect(store.get(o.machine)).toBe('running')
+		store.set(o, 'START')
+		expect(store.get(o)).toBe('running')
 
 		// Dispatch STOP
-		store.set(o.machine, 'STOP')
-		expect(store.get(o.machine)).toBe('idle')
+		store.set(o, 'STOP')
+		expect(store.get(o)).toBe('idle')
 	})
 
 	test('does not transition when return value is undefined', () => {
 		const store = createStore()
 		type Events = { NOOP: void }
-		const o = choreMachine<Events, 'idle'>('idle', (e) => {
+		const o = coreMachine<Events, 'idle'>('idle', (e) => {
 			if (e.type === 'NOOP') return undefined
 		})
 
-		expect(store.get(o.machine)).toBe('idle')
-		store.set(o.machine, 'NOOP')
-		expect(store.get(o.machine)).toBe('idle')
+		expect(store.get(o)).toBe('idle')
+		store.set(o, 'NOOP')
+		expect(store.get(o)).toBe('idle')
 	})
 
 	test('does not transition when return value is null (due to loose equality check in implementation)', () => {
 		const store = createStore()
 		type Events = { TO_NULL: void }
-		const o = choreMachine<Events, 'idle' | null>('idle', (e) => {
+		const o = coreMachine<Events, 'idle' | null>('idle', (e) => {
 			if (e.type === 'TO_NULL') return null
 		})
 
-		expect(store.get(o.machine)).toBe('idle')
-		store.set(o.machine, 'TO_NULL')
+		expect(store.get(o)).toBe('idle')
+		store.set(o, 'TO_NULL')
 		// Loose equality check (next != undefined) means null is treated like undefined
-		expect(store.get(o.machine)).toBe('idle')
+		expect(store.get(o)).toBe('idle')
 	})
 
 	test('supports side effects in transition using send (set)', () => {
 		const store = createStore()
 		const sideEffectAtom = atom('initial')
 		type Events = { SIDE_EFFECT: void }
-		const o = choreMachine<Events, 'idle' | 'done'>(
+		const o = coreMachine<Events, 'idle' | 'done'>(
 			'idle',
 			(e, _state, send) => {
 				if (e.type === 'SIDE_EFFECT') {
@@ -70,11 +70,11 @@ describe('core machine', () => {
 			},
 		)
 
-		expect(store.get(o.machine)).toBe('idle')
+		expect(store.get(o)).toBe('idle')
 		expect(store.get(sideEffectAtom)).toBe('initial')
 
-		store.set(o.machine, 'SIDE_EFFECT')
-		expect(store.get(o.machine)).toBe('done')
+		store.set(o, 'SIDE_EFFECT')
+		expect(store.get(o)).toBe('done')
 		expect(store.get(sideEffectAtom)).toBe('triggered')
 	})
 
@@ -88,7 +88,7 @@ describe('core machine', () => {
 			SELF_LOOP: void
 			SIDE_EFFECT: void
 		}
-		const o = choreMachine<Events, 'idle' | 'running' | 'done' | null>(
+		const o = coreMachine<Events, 'idle' | 'running' | 'done' | null>(
 			'idle',
 			(e, state, send) => {
 				if (e.type === 'START' && state === 'idle') return 'running'
@@ -119,7 +119,7 @@ describe('core machine', () => {
 			TO_NULL: void
 			SIDE_EFFECT: void
 		}
-		const o = choreMachine<Events, 'idle' | 'running' | null>(
+		const o = coreMachine<Events, 'idle' | 'running' | null>(
 			() => 'idle',
 			(e, state, send) => {
 				if (e.type === 'START' && state === 'idle') return 'running'
@@ -164,20 +164,20 @@ describe('core machine', () => {
 			START: void
 			STOP: void
 		}
-		const o = choreMachine<Events, string>('idle', (e, state) => {
+		const o = coreMachine<Events, string>('idle', (e, state) => {
 			if (e.type === 'START' && state === 'idle') return 'running'
 			if (e.type === 'STOP' && state === 'running') return 'idle'
 		})
 
-		expect(store.get(o.machine)).toBe('idle')
+		expect(store.get(o)).toBe('idle')
 
 		// Dispatch START using just a string key
-		store.set(o.machine, 'START')
-		expect(store.get(o.machine)).toBe('running')
+		store.set(o, 'START')
+		expect(store.get(o)).toBe('running')
 
 		// Dispatch STOP using just a string key
-		store.set(o.machine, 'STOP')
-		expect(store.get(o.machine)).toBe('idle')
+		store.set(o, 'STOP')
+		expect(store.get(o)).toBe('idle')
 	})
 
 	test('handles events with payload (machine, can, next)', () => {
@@ -186,18 +186,18 @@ describe('core machine', () => {
 			SET_SPEED: number
 			DOUBLE: void
 		}
-		const o = choreMachine<Events, number>(0, (e, state) => {
+		const o = coreMachine<Events, number>(0, (e, state) => {
 			if (e.type === 'SET_SPEED') return e.payload
 			if (e.type === 'DOUBLE') return state * 2
 		})
 
-		expect(store.get(o.machine)).toBe(0)
+		expect(store.get(o)).toBe(0)
 
 		// 1. Test next helper with payload
 		expect(store.get(o.next({ type: 'SET_SPEED', payload: 10 }))).toBe(10)
 		expect(store.get(o.next({ type: 'SET_SPEED', payload: -5 }))).toBe(-5)
 		// next helper should not mutate the active machine state
-		expect(store.get(o.machine)).toBe(0)
+		expect(store.get(o)).toBe(0)
 
 		// 2. Test can helper with payload
 		// SET_SPEED 10 transition returns 10, which is different from current state (0)
@@ -208,14 +208,14 @@ describe('core machine', () => {
 		expect(store.get(o.can({ type: 'SET_SPEED', payload: 0 }))).toBe(true)
 
 		// 3. Test machine transitions with payload
-		store.set(o.machine, { type: 'SET_SPEED', payload: 10 })
-		expect(store.get(o.machine)).toBe(10)
+		store.set(o, { type: 'SET_SPEED', payload: 10 })
+		expect(store.get(o)).toBe(10)
 
 		// After updating to 10, setting speed to 10 again results in same state, so can() should now return true
 		expect(store.get(o.can({ type: 'SET_SPEED', payload: 10 }))).toBe(true)
 
-		store.set(o.machine, { type: 'SET_SPEED', payload: 25 })
-		expect(store.get(o.machine)).toBe(25)
+		store.set(o, { type: 'SET_SPEED', payload: 25 })
+		expect(store.get(o)).toBe(25)
 	})
 
 	test('supports custom result mapping function', () => {
@@ -225,7 +225,7 @@ describe('core machine', () => {
 			RESET: void
 		}
 		// A machine where state is a number, but we map it to a string representation via result fn
-		const o = choreMachine<Events, number, string>(
+		const o = coreMachine<Events, number, string>(
 			0,
 			(e, state) => {
 				if (e.type === 'INCREMENT') return state + 1
@@ -235,16 +235,16 @@ describe('core machine', () => {
 		)
 
 		// 1. Initial state mapped correctly
-		expect(store.get(o.machine)).toBe('Count: 0')
+		expect(store.get(o)).toBe('Count: 0')
 
 		// 2. Next helper returns mapped predicted state
 		expect(store.get(o.next('INCREMENT'))).toBe('Count: 1')
 		// next helper does not mutate active state
-		expect(store.get(o.machine)).toBe('Count: 0')
+		expect(store.get(o)).toBe('Count: 0')
 
 		// 3. State transitions update mapped value correctly
-		store.set(o.machine, 'INCREMENT')
-		expect(store.get(o.machine)).toBe('Count: 1')
+		store.set(o, 'INCREMENT')
+		expect(store.get(o)).toBe('Count: 1')
 
 		expect(store.get(o.next('INCREMENT'))).toBe('Count: 2')
 		expect(store.get(o.next('RESET'))).toBe('Count: 0')

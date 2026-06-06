@@ -1,4 +1,4 @@
-import { atom, type WritableAtom } from 'jotai/vanilla'
+import { atom, type WritableAtom, type Atom } from 'jotai/vanilla'
 import { fromSendable, type Sendable } from './utils/sendable.ts'
 import type { Tags } from './types.ts'
 import { fromInit } from './utils/init.ts'
@@ -18,35 +18,34 @@ type Send = <Args extends any[]>(
  * @param result - optional result function
  * @returns machine atom
  */
-export function choreMachine<E, S, R = S>(
+export function coreMachine<E, S, R = S>(
 	init: S | (() => S),
 	transition: (e: Tags<E>, s: S, send: Send) => S | undefined | null | void,
 	result: (s: S) => R = id as never,
-) {
+): WritableAtom<R, [e: Sendable<E>], void> & {
+	next: (e: Sendable<E>) => Atom<R>
+	can: (e: Sendable<E>) => Atom<boolean>
+} {
 	const state = atom(fromInit(init))
-	const machine = atom(
+	const machine: any = atom(
 		(get) => result(get(state)),
 		(get, set, e: Sendable<E>) => {
 			const next = transition(fromSendable(e), get(state), set)
 			if (next != undefined) set(state, next)
 		},
 	)
-	const can = (e: Sendable<E>) =>
+	machine.can = (e: Sendable<E>) =>
 		atom((get) => {
 			let dirty = false
 			const last = get(state)
 			const next = transition(fromSendable(e), last, () => (dirty = true))
 			return next == undefined || Object.is(next, last) || dirty
 		})
-	const next = (e: Sendable<E>) =>
+	machine.next = (e: Sendable<E>) =>
 		atom((get) => {
 			const s = get(state)
 			const n = transition(fromSendable(e), s, () => {}) ?? s
 			return result(n)
 		})
-	return {
-		machine,
-		next,
-		can,
-	}
+	return machine
 }
