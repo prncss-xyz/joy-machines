@@ -1,3 +1,5 @@
+import type { WritableAtom } from 'jotai'
+
 export type Prettify<T> = unknown & {
 	[K in keyof T]: T[K]
 }
@@ -15,3 +17,10 @@ export type Tag<Type extends PropertyKey, Payload> = Prettify<{
 }>
 
 export type Tags<O> = ValueUnion<{ [K in keyof O]: Tag<K, O[K]> }>
+
+export type Send = <Args extends any[]>(
+	a: WritableAtom<any, Args, any>,
+	...args: Args
+) => void
+
+export type Init<T> = T | (() => T)

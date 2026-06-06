@@ -1,11 +1,11 @@
 import { atom, createStore } from 'jotai/vanilla'
 import { describe, test, expect } from 'vite-plus/test'
-import { coreMachine } from './coreMachine.ts'
+import { coreMachineAtom } from './coreMachineAtom.ts'
 
 describe('core machine', () => {
 	test('initial state', () => {
 		const store = createStore()
-		const o = coreMachine('idle', () => {})
+		const o = coreMachineAtom('idle', () => {})
 		expect(store.get(o)).toBe('idle')
 	})
 
@@ -15,10 +15,13 @@ describe('core machine', () => {
 			START: void
 			STOP: void
 		}
-		const o = coreMachine<Events, 'idle' | 'running'>('idle', (e, state) => {
-			if (e.type === 'START' && state === 'idle') return 'running'
-			if (e.type === 'STOP' && state === 'running') return 'idle'
-		})
+		const o = coreMachineAtom<Events, 'idle' | 'running'>(
+			'idle',
+			(e, state) => {
+				if (e.type === 'START' && state === 'idle') return 'running'
+				if (e.type === 'STOP' && state === 'running') return 'idle'
+			},
+		)
 
 		expect(store.get(o)).toBe('idle')
 
@@ -34,7 +37,7 @@ describe('core machine', () => {
 	test('does not transition when return value is undefined', () => {
 		const store = createStore()
 		type Events = { NOOP: void }
-		const o = coreMachine<Events, 'idle'>('idle', (e) => {
+		const o = coreMachineAtom<Events, 'idle'>('idle', (e) => {
 			if (e.type === 'NOOP') return undefined
 		})
 
@@ -46,7 +49,7 @@ describe('core machine', () => {
 	test('does not transition when return value is null (due to loose equality check in implementation)', () => {
 		const store = createStore()
 		type Events = { TO_NULL: void }
-		const o = coreMachine<Events, 'idle' | null>('idle', (e) => {
+		const o = coreMachineAtom<Events, 'idle' | null>('idle', (e) => {
 			if (e.type === 'TO_NULL') return null
 		})
 
@@ -60,7 +63,7 @@ describe('core machine', () => {
 		const store = createStore()
 		const sideEffectAtom = atom('initial')
 		type Events = { SIDE_EFFECT: void }
-		const o = coreMachine<Events, 'idle' | 'done'>(
+		const o = coreMachineAtom<Events, 'idle' | 'done'>(
 			'idle',
 			(e, _state, send) => {
 				if (e.type === 'SIDE_EFFECT') {
@@ -88,7 +91,7 @@ describe('core machine', () => {
 			SELF_LOOP: void
 			SIDE_EFFECT: void
 		}
-		const o = coreMachine<Events, 'idle' | 'running' | 'done' | null>(
+		const o = coreMachineAtom<Events, 'idle' | 'running' | 'done' | null>(
 			'idle',
 			(e, state, send) => {
 				if (e.type === 'START' && state === 'idle') return 'running'
@@ -119,7 +122,7 @@ describe('core machine', () => {
 			TO_NULL: void
 			SIDE_EFFECT: void
 		}
-		const o = coreMachine<Events, 'idle' | 'running' | null>(
+		const o = coreMachineAtom<Events, 'idle' | 'running' | null>(
 			() => 'idle',
 			(e, state, send) => {
 				if (e.type === 'START' && state === 'idle') return 'running'
@@ -164,7 +167,7 @@ describe('core machine', () => {
 			START: void
 			STOP: void
 		}
-		const o = coreMachine<Events, string>('idle', (e, state) => {
+		const o = coreMachineAtom<Events, string>('idle', (e, state) => {
 			if (e.type === 'START' && state === 'idle') return 'running'
 			if (e.type === 'STOP' && state === 'running') return 'idle'
 		})
@@ -186,7 +189,7 @@ describe('core machine', () => {
 			SET_SPEED: number
 			DOUBLE: void
 		}
-		const o = coreMachine<Events, number>(0, (e, state) => {
+		const o = coreMachineAtom<Events, number>(0, (e, state) => {
 			if (e.type === 'SET_SPEED') return e.payload
 			if (e.type === 'DOUBLE') return state * 2
 		})
@@ -227,7 +230,7 @@ describe('core machine', () => {
 			RESET: void
 		}
 		// A machine where state is a number, but we map it to a string representation via result fn
-		const o = coreMachine<Events, number, string>(
+		const o = coreMachineAtom<Events, number, string>(
 			0,
 			(e, state) => {
 				if (e.type === 'INCREMENT') return state + 1

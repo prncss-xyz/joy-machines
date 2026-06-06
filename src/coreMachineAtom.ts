@@ -1,13 +1,8 @@
 import { atom, type WritableAtom, type Atom } from 'jotai/vanilla'
 import { fromSendable, type Sendable } from './utils/sendable.ts'
-import type { Tags } from './types.ts'
+import type { Init, Send, Tags } from './types.ts'
 import { fromInit } from './utils/init.ts'
 import { id } from './utils/id.ts'
-
-type Send = <Args extends any[]>(
-	a: WritableAtom<any, Args, any>,
-	...args: Args
-) => void
 
 /**
  * @template E - event object
@@ -18,13 +13,13 @@ type Send = <Args extends any[]>(
  * @param result - optional result function
  * @returns machine atom
  */
-export function coreMachine<E, S, R = S>(
-	init: S | (() => S),
+export function coreMachineAtom<E, S, R = S>(
+	init: Init<S>,
 	transition: (e: Tags<E>, s: S, send: Send) => S | undefined | null | void,
 	result: (s: S) => R = id as never,
 ): WritableAtom<R, [e: Sendable<E>], void> & {
 	next: (e: Sendable<E>) => Atom<R>
-	disabled: (e: Sendable<E>)  => Atom<boolean>
+	disabled: (e: Sendable<E>) => Atom<boolean>
 } {
 	const state = atom(fromInit(init))
 	const machine: any = atom(
