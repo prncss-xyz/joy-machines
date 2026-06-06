@@ -13,11 +13,9 @@ export default defineConfig({
 				command: 'vp test',
 				input: [
 					'vite.config.ts',
-					'vitest.config.ts',
 					'package.json',
 					'pnpm-workspace.yaml',
-					'apps/**/src/**/*.{js,ts,jsx,tsx}',
-					'packages/**/src/**/*.{js,ts,jsx,tsx}',
+					'**/src/**/*.{js,ts,jsx,tsx}',
 				],
 				cache: true,
 			},
@@ -25,16 +23,14 @@ export default defineConfig({
 				command: 'vp test run --coverage',
 				input: [
 					'vite.config.ts',
-					'vitest.config.ts',
 					'package.json',
 					'pnpm-workspace.yaml',
-					'apps/**/src/**/*.{js,ts,jsx,tsx}',
-					'packages/**/src/**/*.{js,ts,jsx,tsx}',
+					'**/src/**/*.{js,ts,jsx,tsx}',
 				],
 				cache: true,
 			},
 			tsc: {
-				command: 'vpr -r tsc',
+				command: 'tsc --noEmit',
 			},
 			knip: {
 				command: 'knip --cache',
@@ -42,15 +38,12 @@ export default defineConfig({
 			commitlint: {
 				command: 'commitlint --edit',
 			},
-			verify_ci: {
-				command: 'vpr knip && vpr tsc && vpr test',
-			},
-			verify_pre: {
-				command: 'vpr knip && vpr tsc && vpr test --changed',
-			},
 			ci: {
-				command: 'vp check && vpr -r build && vpr --parallel verify_ci',
+				command: 'vp checked && vpr knip && vpr tsc && vpr test',
 			},
+			pre_commit: {
+				command: 'vp staged && vpr knip && vpr tsc && vpr test --changed',
+			}
 		},
 	},
 	test: {
