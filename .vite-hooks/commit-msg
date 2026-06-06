@@ -1,1 +1,1 @@
-vp run commitlint "$1"
+vpr commitlint "$1"
