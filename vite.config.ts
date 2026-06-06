@@ -43,7 +43,7 @@ export default defineConfig({
 			},
 			pre_commit: {
 				command: 'vp staged && vpr knip && vpr tsc && vpr test --changed',
-			}
+			},
 		},
 	},
 	test: {
