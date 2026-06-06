@@ -51,10 +51,6 @@ export default defineConfig({
 			ci: {
 				command: 'vp check && vpr -r build && vpr --parallel verify_ci',
 			},
-			precommit: {
-				command:
-					'vpr gen:exports && git add packages/*/src/index.ts && vp staged && vpr -r build && vpr --parallel verify_pre',
-			},
 		},
 	},
 	test: {
