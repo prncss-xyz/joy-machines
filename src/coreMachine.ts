@@ -24,7 +24,7 @@ export function coreMachine<E, S, R = S>(
 	result: (s: S) => R = id as never,
 ): WritableAtom<R, [e: Sendable<E>], void> & {
 	next: (e: Sendable<E>) => Atom<R>
-	can: (e: Sendable<E>) => Atom<boolean>
+	disabled: (e: Sendable<E>)  => Atom<boolean>
 } {
 	const state = atom(fromInit(init))
 	const machine: any = atom(
@@ -34,12 +34,12 @@ export function coreMachine<E, S, R = S>(
 			if (next != undefined) set(state, next)
 		},
 	)
-	machine.can = (e: Sendable<E>) =>
+	machine.disabled = (e: Sendable<E>) =>
 		atom((get) => {
 			let dirty = false
 			const last = get(state)
 			const next = transition(fromSendable(e), last, () => (dirty = true))
-			return next == undefined || Object.is(next, last) || dirty
+			return !(next == undefined || Object.is(next, last) || dirty)
 		})
 	machine.next = (e: Sendable<E>) =>
 		atom((get) => {

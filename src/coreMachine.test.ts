@@ -109,7 +109,7 @@ describe('core machine', () => {
 		expect(store.get(o.next('SIDE_EFFECT'))).toBe('done')
 	})
 
-	test('can helper evaluates event applicability based on return value, object equality, and side effects', () => {
+	test('disabled helper evaluates event applicability based on return value, object equality, and side effects', () => {
 		const store = createStore()
 		const sideEffectAtom = atom('initial')
 		type Events = {
@@ -134,27 +134,27 @@ describe('core machine', () => {
 		)
 
 		// Note on current implementation details:
-		// `can(e)` returns: next == undefined || Object.is(next, last) || dirty
+		// `disabled(e)` returns: !(next == undefined || Object.is(next, last) || dirty)
 		//
 		// 1. START returns 'running', which is not undefined, not equal to 'idle', and did not call send.
-		// Expected: false
-		expect(store.get(o.can('START'))).toBe(false)
+		// Expected: true
+		expect(store.get(o.disabled('START'))).toBe(true)
 
 		// 2. SELF_LOOP returns 'idle', which equals 'idle' (Object.is(next, last) is true).
-		// Expected: true
-		expect(store.get(o.can('SELF_LOOP'))).toBe(true)
+		// Expected: false
+		expect(store.get(o.disabled('SELF_LOOP'))).toBe(false)
 
 		// 3. TO_NULL returns null. Since null == undefined in JavaScript, it matches the first condition.
-		// Expected: true
-		expect(store.get(o.can('TO_NULL'))).toBe(true)
+		// Expected: false
+		expect(store.get(o.disabled('TO_NULL'))).toBe(false)
 
 		// 4. NOOP returns undefined. Matches next == undefined.
-		// Expected: true
-		expect(store.get(o.can('NOOP'))).toBe(true)
+		// Expected: false
+		expect(store.get(o.disabled('NOOP'))).toBe(false)
 
 		// 5. SIDE_EFFECT returns undefined (next == undefined) and triggers send (dirty = true).
-		// Expected: true
-		expect(store.get(o.can('SIDE_EFFECT'))).toBe(true)
+		// Expected: false
+		expect(store.get(o.disabled('SIDE_EFFECT'))).toBe(false)
 	})
 
 	test('fromSendable works with string event names (shortcut keys)', () => {
@@ -180,7 +180,7 @@ describe('core machine', () => {
 		expect(store.get(o)).toBe('idle')
 	})
 
-	test('handles events with payload (machine, can, next)', () => {
+	test('handles events with payload (machine, disabled, next)', () => {
 		const store = createStore()
 		type Events = {
 			SET_SPEED: number
@@ -199,20 +199,22 @@ describe('core machine', () => {
 		// next helper should not mutate the active machine state
 		expect(store.get(o)).toBe(0)
 
-		// 2. Test can helper with payload
+		// 2. Test disabled helper with payload
 		// SET_SPEED 10 transition returns 10, which is different from current state (0)
-		// so can() should evaluate to false (meaning it changes the state / is not a no-op).
-		expect(store.get(o.can({ type: 'SET_SPEED', payload: 10 }))).toBe(false)
+		// so disabled() should evaluate to true (meaning it changes the state / is not a no-op).
+		expect(store.get(o.disabled({ type: 'SET_SPEED', payload: 10 }))).toBe(true)
 		// SET_SPEED 0 transition returns 0, which equals current state (0)
-		// so can() should evaluate to true.
-		expect(store.get(o.can({ type: 'SET_SPEED', payload: 0 }))).toBe(true)
+		// so disabled() should evaluate to false.
+		expect(store.get(o.disabled({ type: 'SET_SPEED', payload: 0 }))).toBe(false)
 
 		// 3. Test machine transitions with payload
 		store.set(o, { type: 'SET_SPEED', payload: 10 })
 		expect(store.get(o)).toBe(10)
 
-		// After updating to 10, setting speed to 10 again results in same state, so can() should now return true
-		expect(store.get(o.can({ type: 'SET_SPEED', payload: 10 }))).toBe(true)
+		// After updating to 10, setting speed to 10 again results in same state, so disabled() should now return false
+		expect(store.get(o.disabled({ type: 'SET_SPEED', payload: 10 }))).toBe(
+			false,
+		)
 
 		store.set(o, { type: 'SET_SPEED', payload: 25 })
 		expect(store.get(o)).toBe(25)
