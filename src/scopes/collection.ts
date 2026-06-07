@@ -10,16 +10,19 @@ export function clearCollectionEntries(filter: (u: unknown) => boolean) {
 	clearCollectionEntriesCallbacks.forEach((clear) => clear(filter))
 }
 
+// TODO: make this more inference friendly
+export interface ScopeOpts<Key, Payload, Encoded> {
+	hydrate?: {
+		decode: (value: Encoded, key: Key) => Payload
+		values: Iterable<[Key, Encoded]>
+	}
+	onMount?: OnMount
+	ttl?: number
+}
+
 export function collection<Key, Payload, Encoded>(
 	factory: (key: Key, onMount: OnMount) => Payload,
-	opts?: {
-		hydrate?: {
-			decode: (value: Encoded, key: Key) => Payload
-			values: Iterable<[Key, Encoded]>
-		}
-		onMount?: OnMount
-		ttl?: number
-	},
+	opts?: ScopeOpts<Key, Payload, Encoded>,
 ) {
 	const ttl = opts?.ttl ?? 0
 	type Entry = {
