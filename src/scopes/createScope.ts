@@ -1,15 +1,12 @@
+import { cached } from '../utils/cached.ts'
 import { collection, type OnMount, type Teardown } from './utils/collection.ts'
 
 type Store<Key> = <Res>(fn: (key: Key, onMount: OnMount) => Res) => Res
 
 function createStoreCollection<Key, Encoded = Store<Key>>() {
-	return collection<Key, Store<Key>, Encoded>((key: Key, onMount) => {
-		const store = new Map<(key: Key, onMount: OnMount) => any, any>()
-		return <Res>(fn: (key: Key, onMount: OnMount) => Res) => {
-			if (!store.has(fn)) store.set(fn, fn(key, onMount))
-			return store.get(fn) as Res
-		}
-	})
+	return collection<Key, Store<Key>, Encoded>((key: Key, onMount) =>
+		cached((fn: (key: Key, onMount: OnMount) => any) => fn(key, onMount)),
+	)
 }
 
 export function createScope<K, Encoded = K>() {
