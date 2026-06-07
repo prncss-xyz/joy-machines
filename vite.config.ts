@@ -46,7 +46,7 @@ export default defineConfig({
 				command: 'commitlint --edit',
 			},
 			ci: {
-				command: 'vp checked && vpr knip && vpr tsc && vpr test',
+				command: 'vp check && vpr knip && vpr tsc && vpr test',
 			},
 			pre_commit: {
 				command: 'vp staged && vpr knip && vpr tsc && vpr test --changed',
