@@ -1,4 +1,4 @@
-import { type Write, coreMachineAtom } from './coreMachineAtom.ts'
+import { type Read, type Write, coreMachineAtom } from './coreMachineAtom.ts'
 import type { Init } from './utils/init.ts'
 import type { Tags } from './utils/tags.ts'
 
@@ -9,7 +9,8 @@ export function modalMachineAtom<Event, State, Result = State>(
 			[E in keyof Event]: (
 				event: Event[E],
 				state: State[S],
-				send: Write,
+				get: Read,
+				set: Write,
 			) => Tags<State> | null | undefined | void
 		}>
 	},
@@ -19,11 +20,11 @@ export function modalMachineAtom<Event, State, Result = State>(
 ) {
 	return coreMachineAtom<Event, Tags<State>, Tags<Result>>(
 		init,
-		(ev, state, send) => {
+		(ev, state, get, set) => {
 			const s = (states as any)[state.type]
 			const handler = s[ev.type]
 			if (!handler) return state
-			return handler(ev.payload, state.payload, send) ?? state
+			return handler(ev.payload, state.payload, get, set) ?? state
 		},
 		result ? (state) => (result as any)[state.type](state.payload) : undefined,
 	)

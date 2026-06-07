@@ -8,15 +8,16 @@ export function directMachineAtom<E, S extends object, R = S>(
 		[K in keyof E]: (
 			payload: E[K],
 			state: S,
-			send: Write,
+			get: Read,
+			set: Write,
 		) => Partial<S> | null | undefined | void
 	},
 	result?: (state: S, read: Read) => R,
 ) {
 	return coreMachineAtom<E, S, R>(
 		init,
-		(e, s, send) => {
-			const res = (events as any)[e.type](e.payload, s, send)
+		(e, s, get, set) => {
+			const res = (events as any)[e.type](e.payload, s, get, set)
 			if (res == null) return s
 			return merge(s, res)
 		},

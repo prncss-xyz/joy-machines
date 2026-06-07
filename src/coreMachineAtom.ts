@@ -23,7 +23,12 @@ export type Read = <Value>(atom: Atom<Value>) => Value
  */
 export function coreMachineAtom<E, S, R = S>(
 	init: Init<S>,
-	transition: (e: Tags<E>, s: S, write: Write) => S | undefined | null | void,
+	transition: (
+		e: Tags<E>,
+		s: S,
+		read: Read,
+		write: Write,
+	) => S | undefined | null | void,
 	result: (s: S, read: Read) => R = id as never,
 ): WritableAtom<R, [e: Sendable<E>], void> & {
 	next: (e: Sendable<E>) => Atom<R>
@@ -33,7 +38,7 @@ export function coreMachineAtom<E, S, R = S>(
 	const machine: any = atom(
 		(get) => result(get(state), get),
 		(get, set, e: Sendable<E>) => {
-			const next = transition(fromSendable(e), get(state), set)
+			const next = transition(fromSendable(e), get(state), get, set)
 			if (next != undefined) set(state, next)
 		},
 	)
@@ -41,13 +46,13 @@ export function coreMachineAtom<E, S, R = S>(
 		atom((get) => {
 			let dirty = false
 			const last = get(state)
-			const next = transition(fromSendable(e), last, () => (dirty = true))
+			const next = transition(fromSendable(e), last, get, () => (dirty = true))
 			return !(next == undefined || Object.is(next, last) || dirty)
 		})
 	machine.next = (e: Sendable<E>) =>
 		atom((get) => {
 			const s = get(state)
-			const n = transition(fromSendable(e), s, () => {}) ?? s
+			const n = transition(fromSendable(e), s, get, () => {}) ?? s
 			return result(n, get)
 		})
 	return machine

@@ -26,5 +26,5 @@ export function tag<Type extends PropertyKey, Payload>(
 	payload: Payload,
 ): Tag<Type, Payload>
 export function tag(p1: any, p2?: any) {
-	return { [PAYLOAD]: p2, [TYPE]: p1 }
+	return { payload: p2, type: p1 }
 }

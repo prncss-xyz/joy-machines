@@ -62,12 +62,15 @@ describe('core machine', () => {
 		const store = createStore()
 		const sideEffectAtom = atom('initial')
 		type E = { SIDE_EFFECT: void }
-		const o = coreMachineAtom<E, 'idle' | 'done'>('idle', (e, _state, send) => {
-			if (e.type === 'SIDE_EFFECT') {
-				send(sideEffectAtom, 'triggered')
-				return 'done'
-			}
-		})
+		const o = coreMachineAtom<E, 'idle' | 'done'>(
+			'idle',
+			(e, _state, _get, send) => {
+				if (e.type === 'SIDE_EFFECT') {
+					send(sideEffectAtom, 'triggered')
+					return 'done'
+				}
+			},
+		)
 
 		expect(store.get(o)).toBe('idle')
 		expect(store.get(sideEffectAtom)).toBe('initial')
@@ -89,7 +92,7 @@ describe('core machine', () => {
 		}
 		const o = coreMachineAtom<E, 'idle' | 'running' | 'done' | null>(
 			'idle',
-			(e, state, send) => {
+			(e, state, _get, send) => {
 				if (e.type === 'START' && state === 'idle') return 'running'
 				if (e.type === 'SELF_LOOP') return 'idle'
 				if (e.type === 'TO_NULL') return null
@@ -120,7 +123,7 @@ describe('core machine', () => {
 		}
 		const o = coreMachineAtom<E, 'idle' | 'running' | null>(
 			() => 'idle',
-			(e, state, send) => {
+			(e, state, _get, send) => {
 				if (e.type === 'START' && state === 'idle') return 'running'
 				if (e.type === 'SELF_LOOP') return 'idle'
 				if (e.type === 'TO_NULL') return null
