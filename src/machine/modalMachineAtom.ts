@@ -1,6 +1,6 @@
 import { type Read, type Write, coreMachineAtom } from './coreMachineAtom.ts'
-import type { Init } from './utils/init.ts'
-import type { Tags } from './utils/tags.ts'
+import type { Init } from '../utils/init.ts'
+import type { Tags } from '../tags.ts';
 
 export function modalMachineAtom<Event, State, Result = State>(
 	init: Init<Tags<State>>,

@@ -1,10 +1,11 @@
 import { type Atom, type WritableAtom, atom } from 'jotai/vanilla'
 
-import { id } from './utils/id.ts'
-import { type Init, fromInit } from './utils/init.ts'
-import { type Sendable, fromSendable } from './utils/sendable.ts'
-import type { Tags } from './utils/tags.ts'
+import { id } from '../utils/id.ts'
+import { type Init, fromInit } from '../utils/init.ts'
+import { type Sendable, fromSendable } from './sendable.ts'
+import type { Tags } from '../tags.ts'
 
+// this is a restricted version of Jotai's
 export type Write = <Args extends any[]>(
 	a: WritableAtom<any, Args, any>,
 	...args: Args

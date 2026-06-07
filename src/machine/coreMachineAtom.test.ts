@@ -1,8 +1,8 @@
 import { atom, createStore } from 'jotai/vanilla'
 import { describe, expect, test } from 'vite-plus/test'
+import { coreMachineAtom } from './coreMachineAtom.ts';
+import { tag } from '../tags.ts';
 
-import { coreMachineAtom } from './coreMachineAtom.ts'
-import { tag } from './utils/tags.ts'
 
 describe('core machine', () => {
 	test('initial state', () => {

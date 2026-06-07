@@ -1,4 +1,4 @@
-import type { Prettify, ValueUnion } from './types.ts'
+import type { Prettify, ValueUnion } from './utils/types.ts'
 
 export const TYPE = 'type'
 export type Type = typeof TYPE

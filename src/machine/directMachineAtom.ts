@@ -1,6 +1,6 @@
 import { type Read, type Write, coreMachineAtom } from './coreMachineAtom.ts'
-import type { Init } from './utils/init.ts'
-import { merge } from './utils/merge.ts'
+import type { Init } from '../utils/init.ts'
+import { merge } from './merge.ts'
 
 export function directMachineAtom<E, S extends object, R = S>(
 	init: Init<S>,
