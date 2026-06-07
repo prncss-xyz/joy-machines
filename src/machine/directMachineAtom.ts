@@ -1,3 +1,5 @@
+import type { WritableAtom } from 'jotai/vanilla'
+
 import type { Init } from '../utils/init.ts'
 import { type Read, type Write, coreMachineAtom } from './coreMachineAtom.ts'
 import { merge } from './merge.ts'
@@ -12,7 +14,10 @@ export function directMachineAtom<E, S extends object, R = S>(
 			set: Write,
 		) => Partial<S> | null | undefined | void
 	},
-	result?: (state: S, read: Read) => R,
+	opts?: {
+		result?: (state: S, read: Read) => R
+		factory?: (value: S) => WritableAtom<S, [S], any>
+	},
 ) {
 	return coreMachineAtom<E, S, R>(
 		init,
@@ -21,6 +26,6 @@ export function directMachineAtom<E, S extends object, R = S>(
 			if (res == null) return s
 			return merge(s, res)
 		},
-		result,
+		opts,
 	)
 }

@@ -1,3 +1,5 @@
+import type { WritableAtom } from 'jotai/vanilla'
+
 import type { Tags } from '../tags.ts'
 import type { Init } from '../utils/init.ts'
 import { type Read, type Write, coreMachineAtom } from './coreMachineAtom.ts'
@@ -14,10 +16,16 @@ export function modalMachineAtom<Event, State, Result = State>(
 			) => Tags<State> | null | undefined | void
 		}>
 	},
-	result?: {
-		[S in keyof State]: (state: State[S]) => Result
+	opts?: {
+		result?: {
+			[S in keyof State]: (state: State[S]) => Result
+		}
+		factory?: (
+			value: Tags<State>,
+		) => WritableAtom<Tags<State>, [Tags<State>], any>
 	},
 ) {
+	const { result, factory } = opts ?? {}
 	return coreMachineAtom<Event, Tags<State>, Tags<Result>>(
 		init,
 		(ev, state, get, set) => {
@@ -26,6 +34,11 @@ export function modalMachineAtom<Event, State, Result = State>(
 			if (!handler) return state
 			return handler(ev.payload, state.payload, get, set) ?? state
 		},
-		result ? (state) => (result as any)[state.type](state.payload) : undefined,
+		{
+			factory,
+			result: result
+				? (state) => (result as any)[state.type](state.payload)
+				: undefined,
+		},
 	)
 }

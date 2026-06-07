@@ -198,7 +198,7 @@ describe('core machine', () => {
 				if (e.type === 'RESET') return 0
 				return state
 			},
-			(state) => `Count: ${state}`,
+			{ result: (state) => `Count: ${state}` },
 		)
 
 		// 1. Initial state mapped correctly
@@ -215,5 +215,14 @@ describe('core machine', () => {
 
 		expect(store.get(o.next('INCREMENT'))).toBe('Count: 2')
 		expect(store.get(o.next('RESET'))).toBe('Count: 0')
+	})
+
+	test('supports custom factory function', () => {
+		const store = createStore()
+		const customAtom = <T>(val: T) => atom(val)
+		const o = coreMachineAtom<any, string>('idle', () => 'idle', {
+			factory: customAtom,
+		})
+		expect(store.get(o)).toBe('idle')
 	})
 })

@@ -26,12 +26,16 @@ export type Read = <Value>(atom: Atom<Value>) => Value
 export function coreMachineAtom<E, S, R = S>(
 	init: Init<S>,
 	transition: (e: Tags<E>, s: S, read: Read, write: Write) => S,
-	result: (s: S, read: Read) => R = id as never,
+	opts?: {
+		result?: (s: S, read: Read) => R
+		factory?: (value: S) => WritableAtom<S, [S], any>
+	},
 ): WritableAtom<R, [e: Sendable<E>], void> & {
 	next: (e: Sendable<E>) => Atom<R>
 	can: (e: Sendable<E>) => Atom<boolean>
 } {
-	const state = atom(fromInit(init))
+	const { result = id as never, factory = atom<S> } = opts ?? {}
+	const state = factory(fromInit(init))
 	const machine: any = atom(
 		(get) => result(get(state), get),
 		(get, set, e: Sendable<E>) =>
