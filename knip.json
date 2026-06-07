@@ -6,5 +6,6 @@
 		"@typescript/native-preview",
 		"bumpp"
 	],
+	"ignoreBinaries": ["vpr"],
 	"exclude": ["types"]
 }

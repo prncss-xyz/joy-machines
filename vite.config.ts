@@ -31,6 +31,13 @@ export default defineConfig({
 			},
 			tsc: {
 				command: 'tsc --noEmit',
+				input: [
+					'tsconfig.json',
+					'package.json',
+					'pnpm-workspace.yaml',
+					'**/src/**/*.{js,ts,jsx,tsx}',
+				],
+				cache: true,
 			},
 			knip: {
 				command: 'knip --cache',

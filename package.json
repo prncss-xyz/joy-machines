@@ -27,8 +27,10 @@
 		"build": "vp pack",
 		"dev": "vp pack --watch",
 		"dev:test": "vp test watch",
-		"coverage": "vp test --coverage",
-		"check": "vp check",
+		"check:test": "vp test --coverage",
+		"check:tsc": "vpr tsc",
+		"check:knip": "vpr knip",
+		"fix": "vp check --fix",
 		"prepare": "vp config",
 		"prepublishOnly": "vp run build"
 	},
