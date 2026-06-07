@@ -1,4 +1,4 @@
-import { coreMachineAtom, type Write } from './coreMachineAtom.ts'
+import { type Write, coreMachineAtom } from './coreMachineAtom.ts'
 import type { Init } from './utils/init.ts'
 import type { Tags } from './utils/tags.ts'
 

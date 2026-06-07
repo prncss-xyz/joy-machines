@@ -1,5 +1,6 @@
-import { describe, test, expect } from 'vite-plus/test'
 import { createStore } from 'jotai/vanilla'
+import { describe, expect, test } from 'vite-plus/test'
+
 import { directMachineAtom } from './directMachineAtom.ts'
 
 describe('directMachineAtom type inference', () => {
@@ -15,7 +16,7 @@ describe('directMachineAtom type inference', () => {
 
 		// Minimal runtime check to ensure it functions
 		expect(store.get(machineAtom)).toEqual({ count: 0, status: 'idle' })
-		store.set(machineAtom, { type: 'inc', payload: 5 })
+		store.set(machineAtom, { payload: 5, type: 'inc' })
 		expect(store.get(machineAtom)).toEqual({ count: 5, status: 'idle' })
 	})
 })

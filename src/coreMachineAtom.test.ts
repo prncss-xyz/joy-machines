@@ -1,5 +1,6 @@
 import { atom, createStore } from 'jotai/vanilla'
-import { describe, test, expect } from 'vite-plus/test'
+import { describe, expect, test } from 'vite-plus/test'
+
 import { coreMachineAtom } from './coreMachineAtom.ts'
 import { tag } from './utils/tags.ts'
 
@@ -200,21 +201,21 @@ describe('core machine', () => {
 		// 2. Test disabled helper with payload
 		// SET_SPEED 10 transition returns 10, which is different from current state (0)
 		// so disabled() should evaluate to true (meaning it changes the state / is not a no-op).
-		expect(store.get(o.disabled({ type: 'SET_SPEED', payload: 10 }))).toBe(true)
+		expect(store.get(o.disabled({ payload: 10, type: 'SET_SPEED' }))).toBe(true)
 		// SET_SPEED 0 transition returns 0, which equals current state (0)
 		// so disabled() should evaluate to false.
-		expect(store.get(o.disabled({ type: 'SET_SPEED', payload: 0 }))).toBe(false)
+		expect(store.get(o.disabled({ payload: 0, type: 'SET_SPEED' }))).toBe(false)
 
 		// 3. Test machine transitions with payload
-		store.set(o, { type: 'SET_SPEED', payload: 10 })
+		store.set(o, { payload: 10, type: 'SET_SPEED' })
 		expect(store.get(o)).toBe(10)
 
 		// After updating to 10, setting speed to 10 again results in same state, so disabled() should now return false
-		expect(store.get(o.disabled({ type: 'SET_SPEED', payload: 10 }))).toBe(
+		expect(store.get(o.disabled({ payload: 10, type: 'SET_SPEED' }))).toBe(
 			false,
 		)
 
-		store.set(o, { type: 'SET_SPEED', payload: 25 })
+		store.set(o, { payload: 25, type: 'SET_SPEED' })
 		expect(store.get(o)).toBe(25)
 	})
 

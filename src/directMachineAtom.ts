@@ -1,4 +1,4 @@
-import { coreMachineAtom, type Read, type Write } from './coreMachineAtom.ts'
+import { type Read, type Write, coreMachineAtom } from './coreMachineAtom.ts'
 import type { Init } from './utils/init.ts'
 import { merge } from './utils/merge.ts'
 

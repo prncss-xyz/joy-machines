@@ -1,7 +1,8 @@
-import { atom, type WritableAtom, type Atom } from 'jotai/vanilla'
-import { fromSendable, type Sendable } from './utils/sendable.ts'
-import { fromInit, type Init } from './utils/init.ts'
+import { type Atom, type WritableAtom, atom } from 'jotai/vanilla'
+
 import { id } from './utils/id.ts'
+import { type Init, fromInit } from './utils/init.ts'
+import { type Sendable, fromSendable } from './utils/sendable.ts'
 import type { Tags } from './utils/tags.ts'
 
 export type Write = <Args extends any[]>(
