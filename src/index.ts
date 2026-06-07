@@ -1,1 +1,1 @@
-export * from "./scopes/createScope.ts";
+export * from './scopes/createScope.ts'

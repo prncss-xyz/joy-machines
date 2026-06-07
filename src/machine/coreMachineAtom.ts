@@ -1,9 +1,10 @@
 import { type Atom, type WritableAtom, atom } from 'jotai/vanilla'
 
+import type { Tags } from '../tags.ts'
 import { id } from '../utils/id.ts'
 import { type Init, fromInit } from '../utils/init.ts'
+import { noop } from '../utils/noop.ts'
 import { type Sendable, fromSendable } from './sendable.ts'
-import type { Tags } from '../tags.ts'
 
 // this is a restricted version of Jotai's
 export type Write = <Args extends any[]>(
@@ -24,37 +25,28 @@ export type Read = <Value>(atom: Atom<Value>) => Value
  */
 export function coreMachineAtom<E, S, R = S>(
 	init: Init<S>,
-	transition: (
-		e: Tags<E>,
-		s: S,
-		read: Read,
-		write: Write,
-	) => S | undefined | null | void,
+	transition: (e: Tags<E>, s: S, read: Read, write: Write) => S,
 	result: (s: S, read: Read) => R = id as never,
 ): WritableAtom<R, [e: Sendable<E>], void> & {
 	next: (e: Sendable<E>) => Atom<R>
-	disabled: (e: Sendable<E>) => Atom<boolean>
+	can: (e: Sendable<E>) => Atom<boolean>
 } {
 	const state = atom(fromInit(init))
 	const machine: any = atom(
 		(get) => result(get(state), get),
-		(get, set, e: Sendable<E>) => {
-			const next = transition(fromSendable(e), get(state), get, set)
-			if (next != undefined) set(state, next)
-		},
+		(get, set, e: Sendable<E>) =>
+			set(state, transition(fromSendable(e), get(state), get, set)),
 	)
-	machine.disabled = (e: Sendable<E>) =>
+	machine.can = (e: Sendable<E>) =>
 		atom((get) => {
 			let dirty = false
 			const last = get(state)
 			const next = transition(fromSendable(e), last, get, () => (dirty = true))
-			return !(next == undefined || Object.is(next, last) || dirty)
+			return dirty || !Object.is(next, last)
 		})
 	machine.next = (e: Sendable<E>) =>
-		atom((get) => {
-			const s = get(state)
-			const n = transition(fromSendable(e), s, get, () => {}) ?? s
-			return result(n, get)
-		})
+		atom((get) =>
+			result(transition(fromSendable(e), get(state), get, noop), get),
+		)
 	return machine
 }
