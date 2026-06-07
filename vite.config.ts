@@ -170,7 +170,7 @@ export default defineConfig({
 				command: 'commitlint --edit',
 			},
 			knip: {
-				command: 'knip --cache',
+				command: 'knip --production --cache',
 			},
 			pre_commit: {
 				command: 'vp staged && vpr knip && vpr tsc && vpr test --changed',

@@ -1,5 +1,5 @@
-import { PAYLOAD, TYPE, type Tags } from '../tags.ts'
-import type { Prettify } from '../utils/types.ts'
+import { PAYLOAD, TYPE, type Tags } from '../../tags.ts'
+import type { Prettify } from '../../utils/types.ts'
 
 export type KeysOfVoid<T> = {
 	[K in keyof T]: T[K] extends void ? K : never

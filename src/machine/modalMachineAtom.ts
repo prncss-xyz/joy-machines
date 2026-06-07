@@ -1,8 +1,8 @@
 import type { WritableAtom } from 'jotai/vanilla'
 
 import type { Tags } from '../tags.ts'
-import type { Init } from '../utils/init.ts'
 import { type Read, type Write, coreMachineAtom } from './coreMachineAtom.ts'
+import type { Init } from './utils/init.ts'
 
 export function modalMachineAtom<Event, State, Result = State>(
 	init: Init<Tags<State>>,

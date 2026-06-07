@@ -7,5 +7,8 @@
 		"bumpp"
 	],
 	"ignoreBinaries": ["vpr"],
+	"ignoreIssues": {
+		"src/scopes/utils/collection.ts": ["exports"]
+	},
 	"exclude": ["types"]
 }

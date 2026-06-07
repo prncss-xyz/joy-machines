@@ -1,7 +1,4 @@
-import { atom, useAtomValue, type Atom } from 'jotai'
-import { useState } from 'react'
-
-import { collection, type OnMount, type Teardown } from './collection.ts'
+import { collection, type OnMount, type Teardown } from './utils/collection.ts'
 
 type Store<Key> = <Res>(fn: (key: Key, onMount: OnMount) => Res) => Res
 
@@ -27,16 +24,4 @@ export function createScope<K, Encoded = K>() {
 		}
 		return (k: K) => store.get(k)(cb)
 	}
-}
-
-function createDummyAtom() {
-	return atom(undefined)
-}
-
-export function useAnchorScope<K>(
-	scope: <A extends Atom<any>>(fn: (k: K) => A) => (k: K) => A,
-	key: K,
-) {
-	const [dummyAtom] = useState(() => scope(createDummyAtom))
-	useAtomValue(dummyAtom(key))
 }
