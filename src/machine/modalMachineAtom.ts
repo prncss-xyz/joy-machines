@@ -18,7 +18,7 @@ export function modalMachineAtom<Event, State, Result = State>(
 	},
 	opts?: {
 		result?: {
-			[S in keyof State]: (state: State[S]) => Result
+			[S in keyof State]: (state: State[S], get: Read) => Result
 		}
 		factory?: (
 			value: Tags<State>,
@@ -37,7 +37,7 @@ export function modalMachineAtom<Event, State, Result = State>(
 		{
 			factory,
 			result: result
-				? (state) => (result as any)[state.type](state.payload)
+				? (state, get) => (result as any)[state.type](state.payload, get)
 				: undefined,
 		},
 	)
