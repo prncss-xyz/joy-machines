@@ -1,5 +1,5 @@
-import { coreMachineAtom } from './coreMachineAtom.ts'
-import type { Init, Send } from './types.ts'
+import { coreMachineAtom, type Read, type Write } from './coreMachineAtom.ts'
+import type { Init } from './utils/init.ts';
 import { merge } from './utils/merge.ts'
 
 export function directMachineAtom<E, S extends object, R = S>(
@@ -8,10 +8,10 @@ export function directMachineAtom<E, S extends object, R = S>(
 		[K in keyof E]: (
 			payload: E[K],
 			state: S,
-			send: Send,
+			send: Write,
 		) => Partial<S> | null | undefined | void
 	},
-	result?: (state: S) => R,
+	result?: (state: S, read: Read) => R,
 ) {
 	return coreMachineAtom<E, S, R>(
 		init,

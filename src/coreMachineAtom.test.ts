@@ -11,11 +11,11 @@ describe('core machine', () => {
 
 	test('transitions to new state when return value is defined and not undefined', () => {
 		const store = createStore()
-		type Events = {
+		type E = {
 			START: void
 			STOP: void
 		}
-		const o = coreMachineAtom<Events, 'idle' | 'running'>(
+		const o = coreMachineAtom<E, 'idle' | 'running'>(
 			'idle',
 			(e, state) => {
 				if (e.type === 'START' && state === 'idle') return 'running'
@@ -36,8 +36,8 @@ describe('core machine', () => {
 
 	test('does not transition when return value is undefined', () => {
 		const store = createStore()
-		type Events = { NOOP: void }
-		const o = coreMachineAtom<Events, 'idle'>('idle', (e) => {
+		type E = { NOOP: void }
+		const o = coreMachineAtom<E, 'idle'>('idle', (e) => {
 			if (e.type === 'NOOP') return undefined
 		})
 
@@ -48,8 +48,8 @@ describe('core machine', () => {
 
 	test('does not transition when return value is null (due to loose equality check in implementation)', () => {
 		const store = createStore()
-		type Events = { TO_NULL: void }
-		const o = coreMachineAtom<Events, 'idle' | null>('idle', (e) => {
+		type E = { TO_NULL: void }
+		const o = coreMachineAtom<E, 'idle' | null>('idle', (e) => {
 			if (e.type === 'TO_NULL') return null
 		})
 
@@ -62,8 +62,8 @@ describe('core machine', () => {
 	test('supports side effects in transition using send (set)', () => {
 		const store = createStore()
 		const sideEffectAtom = atom('initial')
-		type Events = { SIDE_EFFECT: void }
-		const o = coreMachineAtom<Events, 'idle' | 'done'>(
+		type E = { SIDE_EFFECT: void }
+		const o = coreMachineAtom<E, 'idle' | 'done'>(
 			'idle',
 			(e, _state, send) => {
 				if (e.type === 'SIDE_EFFECT') {
@@ -84,14 +84,14 @@ describe('core machine', () => {
 	test('next helper returns predicted next state or return value', () => {
 		const store = createStore()
 		const sideEffectAtom = atom('initial')
-		type Events = {
+		type E = {
 			START: void
 			NOOP: void
 			TO_NULL: void
 			SELF_LOOP: void
 			SIDE_EFFECT: void
 		}
-		const o = coreMachineAtom<Events, 'idle' | 'running' | 'done' | null>(
+		const o = coreMachineAtom<E, 'idle' | 'running' | 'done' | null>(
 			'idle',
 			(e, state, send) => {
 				if (e.type === 'START' && state === 'idle') return 'running'
@@ -115,14 +115,14 @@ describe('core machine', () => {
 	test('disabled helper evaluates event applicability based on return value, object equality, and side effects', () => {
 		const store = createStore()
 		const sideEffectAtom = atom('initial')
-		type Events = {
+		type E = {
 			START: void
 			NOOP: void
 			SELF_LOOP: void
 			TO_NULL: void
 			SIDE_EFFECT: void
 		}
-		const o = coreMachineAtom<Events, 'idle' | 'running' | null>(
+		const o = coreMachineAtom<E, 'idle' | 'running' | null>(
 			() => 'idle',
 			(e, state, send) => {
 				if (e.type === 'START' && state === 'idle') return 'running'
@@ -163,11 +163,11 @@ describe('core machine', () => {
 	test('fromSendable works with string event names (shortcut keys)', () => {
 		const store = createStore()
 		// Test shortcut string events (Sendable allows just the key if it resolves to void/no payload)
-		type Events = {
+		type E = {
 			START: void
 			STOP: void
 		}
-		const o = coreMachineAtom<Events, string>('idle', (e, state) => {
+		const o = coreMachineAtom<E, string>('idle', (e, state) => {
 			if (e.type === 'START' && state === 'idle') return 'running'
 			if (e.type === 'STOP' && state === 'running') return 'idle'
 		})
@@ -185,11 +185,11 @@ describe('core machine', () => {
 
 	test('handles events with payload (machine, disabled, next)', () => {
 		const store = createStore()
-		type Events = {
+		type E = {
 			SET_SPEED: number
 			DOUBLE: void
 		}
-		const o = coreMachineAtom<Events, number>(0, (e, state) => {
+		const o = coreMachineAtom<E, number>(0, (e, state) => {
 			if (e.type === 'SET_SPEED') return e.payload
 			if (e.type === 'DOUBLE') return state * 2
 		})
@@ -225,12 +225,12 @@ describe('core machine', () => {
 
 	test('supports custom result mapping function', () => {
 		const store = createStore()
-		type Events = {
+		type E = {
 			INCREMENT: void
 			RESET: void
 		}
 		// A machine where state is a number, but we map it to a string representation via result fn
-		const o = coreMachineAtom<Events, number, string>(
+		const o = coreMachineAtom<E, number, string>(
 			0,
 			(e, state) => {
 				if (e.type === 'INCREMENT') return state + 1
