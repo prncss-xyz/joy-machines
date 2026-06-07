@@ -1,6 +1,7 @@
 import { atom, createStore } from 'jotai/vanilla'
 import { describe, test, expect } from 'vite-plus/test'
 import { coreMachineAtom } from './coreMachineAtom.ts'
+import { tag } from './utils/tags.ts'
 
 describe('core machine', () => {
 	test('initial state', () => {
@@ -15,13 +16,10 @@ describe('core machine', () => {
 			START: void
 			STOP: void
 		}
-		const o = coreMachineAtom<E, 'idle' | 'running'>(
-			'idle',
-			(e, state) => {
-				if (e.type === 'START' && state === 'idle') return 'running'
-				if (e.type === 'STOP' && state === 'running') return 'idle'
-			},
-		)
+		const o = coreMachineAtom<E, 'idle' | 'running'>('idle', (e, state) => {
+			if (e.type === 'START' && state === 'idle') return 'running'
+			if (e.type === 'STOP' && state === 'running') return 'idle'
+		})
 
 		expect(store.get(o)).toBe('idle')
 
@@ -63,15 +61,12 @@ describe('core machine', () => {
 		const store = createStore()
 		const sideEffectAtom = atom('initial')
 		type E = { SIDE_EFFECT: void }
-		const o = coreMachineAtom<E, 'idle' | 'done'>(
-			'idle',
-			(e, _state, send) => {
-				if (e.type === 'SIDE_EFFECT') {
-					send(sideEffectAtom, 'triggered')
-					return 'done'
-				}
-			},
-		)
+		const o = coreMachineAtom<E, 'idle' | 'done'>('idle', (e, _state, send) => {
+			if (e.type === 'SIDE_EFFECT') {
+				send(sideEffectAtom, 'triggered')
+				return 'done'
+			}
+		})
 
 		expect(store.get(o)).toBe('idle')
 		expect(store.get(sideEffectAtom)).toBe('initial')
@@ -197,8 +192,8 @@ describe('core machine', () => {
 		expect(store.get(o)).toBe(0)
 
 		// 1. Test next helper with payload
-		expect(store.get(o.next({ type: 'SET_SPEED', payload: 10 }))).toBe(10)
-		expect(store.get(o.next({ type: 'SET_SPEED', payload: -5 }))).toBe(-5)
+		expect(store.get(o.next(tag('SET_SPEED', 10)))).toBe(10)
+		expect(store.get(o.next(tag('SET_SPEED', -5)))).toBe(-5)
 		// next helper should not mutate the active machine state
 		expect(store.get(o)).toBe(0)
 

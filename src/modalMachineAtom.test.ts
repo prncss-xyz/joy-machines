@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vite-plus/test'
 import { createStore } from 'jotai/vanilla'
 import { modalMachineAtom } from './modalMachineAtom.ts'
+import { tag } from './utils/tags.ts'
 
 describe('directMachineAtom type inference', () => {
 	test('infers types correctly with explicit generics', () => {
@@ -8,17 +9,14 @@ describe('directMachineAtom type inference', () => {
 		const machineAtom = modalMachineAtom<
 			{ start: number; stop: number },
 			{ running: number; stopped: number }
-		>(
-			{ type: 'stopped', payload: 0 },
-			{
-				stopped: {
-					start: (e) => ({ type: 'running', payload: e }),
-				},
-				running: {
-					stop: (e) => ({ type: 'stopped', payload: e }),
-				},
+		>(tag('stopped', 0), {
+			stopped: {
+				start: (e) => tag('running', e),
 			},
-		)
+			running: {
+				stop: (e) => tag('stopped', e),
+			},
+		})
 
 		// Minimal runtime check to ensure it functions
 		expect(store.get(machineAtom)).toEqual({ payload: 0, type: 'stopped' })

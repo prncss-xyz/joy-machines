@@ -19,3 +19,12 @@ export type TagOf<T extends AnyTag, Type extends TypeIn<T>> = Prettify<
 >
 
 export type Tags<O> = ValueUnion<{ [K in keyof O]: Tag<K, O[K]> }>
+
+export function tag<Type extends PropertyKey>(type: Type): Tag<Type, void>
+export function tag<Type extends PropertyKey, Payload>(
+	type: Type,
+	payload: Payload,
+): Tag<Type, Payload>
+export function tag(p1: any, p2?: any) {
+	return { [PAYLOAD]: p2, [TYPE]: p1 }
+}
