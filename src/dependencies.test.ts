@@ -1,11 +1,14 @@
-import { createStore, atom } from 'jotai'
+import { createStore, atom, type Atom } from 'jotai'
 import { describe, expect, it } from 'vite-plus/test'
 
 import { dependencies } from './dependencies.ts'
 
 describe('dependencies', () => {
 	it('should bind and retrieve dependencies using getDep and dep proxy', () => {
-		const { bind, dep } = dependencies<{ foo: string; bar: number }>()
+		const { bind, dep } = dependencies<{
+			foo: Atom<string>
+			bar: Atom<number>
+		}>()
 
 		const store = createStore()
 
@@ -21,7 +24,7 @@ describe('dependencies', () => {
 	})
 
 	it('should throw error if dependencies are not bound', () => {
-		const { dep } = dependencies<{ foo: string }>()
+		const { dep } = dependencies<{ foo: Atom<string> }>()
 		const store = createStore()
 
 		expect(() => store.get(dep.foo)).toThrow('dependencies not bound')

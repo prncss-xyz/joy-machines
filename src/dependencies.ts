@@ -3,9 +3,11 @@ import { useHydrateAtoms } from 'jotai/utils'
 import type { ReactNode } from 'react'
 
 import { cached } from './utils/cached.ts'
+import type { Prettify } from './utils/types.ts';
 
 export function dependencies<O>() {
-	type T = { [K in keyof O]: Atom<O[K]> }
+	type T = Prettify<{ [K in keyof O as O[K] extends Atom<any> ? K : never]: O[K] }>
+	type K = keyof T
 	const bindingAtom = atom<T | undefined>(undefined)
 
 	function bind(t: T) {
@@ -22,20 +24,20 @@ export function dependencies<O>() {
 		return children
 	}
 
-	const getDep = cached((k: keyof O) => {
+	const getDep = cached((k: K) => {
 		return atom((get) => {
 			const b = get(bindingAtom)
 			if (b == undefined) throw new Error('dependencies not bound')
 			// this will only happen in TestContainer
 			const r = b[k]
 			if (r == undefined) throw new Error('dependency not bound')
-			return get(r)
+			return get(r as any)
 		})
 	})
 
-	const dep = new Proxy({} as { [K in keyof O]: Atom<O[K]> }, {
+	const dep = new Proxy({} as T, {
 		get(_, prop) {
-			return getDep(prop as keyof O)
+			return getDep(prop as K)
 		},
 	})
 
