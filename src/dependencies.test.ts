@@ -1,4 +1,4 @@
-import { createStore, atom, type Atom } from 'jotai'
+import { createStore, atom, type Atom, type WritableAtom } from 'jotai'
 import { describe, expect, it } from 'vite-plus/test'
 
 import { dependencies } from './dependencies.ts'
@@ -21,6 +21,24 @@ describe('dependencies', () => {
 		// Test dep proxy
 		expect(store.get(dep.foo)).toBe('hello')
 		expect(store.get(dep.bar)).toBe(42)
+	})
+
+	it('should support WritableAtom dependencies', () => {
+		const { bind, dep } = dependencies<{
+			foo: WritableAtom<string, [string], void>
+		}>()
+
+		const store = createStore()
+		const fooAtom = atom('hello')
+
+		const [bindingAtom, t] = bind({ foo: fooAtom })
+		store.set(bindingAtom, t)
+
+		expect(store.get(dep.foo)).toBe('hello')
+
+		store.set(dep.foo, 'world')
+		expect(store.get(dep.foo)).toBe('world')
+		expect(store.get(fooAtom)).toBe('world')
 	})
 
 	it('should throw error if dependencies are not bound', () => {
