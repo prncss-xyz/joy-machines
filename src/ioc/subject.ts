@@ -1,7 +1,7 @@
 import { atom, type Getter, type Setter, type WritableAtom } from 'jotai'
 
-import { id } from '../utils/id.ts'
-import { noop } from '../utils/noop.ts'
+import { id } from '@/utils/id'
+import { noop } from '@/utils/noop'
 
 export function createSubject<M>(
 	onNoListeners: (get: Getter, set: Setter, message: M) => void = noop,

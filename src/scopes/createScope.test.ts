@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { createScope } from './createScope.ts'
+import { createScope } from './createScope'
 
 describe('createScope', () => {
 	it('should create a scope and retrieve items', () => {

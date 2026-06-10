@@ -1,7 +1,7 @@
 import { createStore, atom, type Atom, type WritableAtom } from 'jotai'
 import { describe, expect, it } from 'vite-plus/test'
 
-import { dependencies } from './dependencies.ts'
+import { dependencies } from './dependencies'
 
 describe('dependencies', () => {
 	it('should bind and retrieve dependencies using getDep and dep proxy', () => {

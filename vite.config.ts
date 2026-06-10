@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url'
+
 import { defineConfig } from 'vite-plus'
 
 export default defineConfig({
@@ -159,6 +161,11 @@ export default defineConfig({
 			react: {
 				version: '19.2.3',
 			},
+		},
+	},
+	resolve: {
+		alias: {
+			'@': fileURLToPath(new URL('./src', import.meta.url)),
 		},
 	},
 	run: {

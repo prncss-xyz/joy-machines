@@ -1,8 +1,8 @@
 import { atom, createStore } from 'jotai/vanilla'
 import { describe, expect, test } from 'vite-plus/test'
 
-import { modalMachineAtom } from './modalMachineAtom.ts'
-import { tag } from './tags.ts'
+import { modalMachineAtom } from './modalMachineAtom'
+import { tag } from './tags'
 
 describe('directMachineAtom type inference', () => {
 	test('infers types correctly with explicit generics', () => {

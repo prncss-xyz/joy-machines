@@ -1,5 +1,6 @@
-import { cached } from '../utils/cached.ts'
-import { collection, type OnMount, type Teardown } from './utils/collection.ts'
+import { cached } from '@/utils/cached'
+
+import { collection, type OnMount, type Teardown } from './utils/collection'
 
 function makeAtom<K, A extends { onMount?: (...args: any[]) => Teardown }>(
 	fn: (k: K) => A,

@@ -2,7 +2,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import type { WritableAtom } from 'jotai/vanilla'
 import type { Atom } from 'jotai/vanilla'
 
-import type { Sendable } from './utils/sendable.ts'
+import type { Sendable } from './utils/sendable'
 
 export function useRegisterButton<E>(
 	machineAtom: WritableAtom<any, [e: Sendable<E>], void> & {

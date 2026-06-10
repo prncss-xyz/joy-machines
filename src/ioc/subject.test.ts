@@ -1,7 +1,7 @@
 import { createStore, atom } from 'jotai'
 import { describe, expect, test } from 'vite-plus/test'
 
-import { createSubject } from './subject.ts'
+import { createSubject } from './subject'
 
 describe('createSubject', () => {
 	test('notifies registered listener atoms when published', () => {

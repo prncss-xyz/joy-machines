@@ -1,7 +1,7 @@
 import { atom, createStore } from 'jotai/vanilla'
 import { describe, expect, test } from 'vite-plus/test'
 
-import { directMachineAtom } from './directMachineAtom.ts'
+import { directMachineAtom } from './directMachineAtom'
 
 describe('directMachineAtom type inference', () => {
 	test('infers types correctly with explicit generics', () => {

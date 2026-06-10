@@ -1,10 +1,11 @@
 import { type Atom, type Getter, type WritableAtom, atom } from 'jotai/vanilla'
 
-import { id } from '../utils/id.ts'
-import { noop } from '../utils/noop.ts'
-import type { Tags } from './tags.ts'
-import { type Init, fromInit } from './utils/init.ts'
-import { type Sendable, fromSendable } from './utils/sendable.ts'
+import { id } from '@/utils/id'
+import { noop } from '@/utils/noop'
+
+import type { Tags } from './tags'
+import { type Init, fromInit } from './utils/init'
+import { type Sendable, fromSendable } from './utils/sendable'
 
 // this is a restricted version of Jotai's
 export type RestrictedSetter = <Args extends any[]>(

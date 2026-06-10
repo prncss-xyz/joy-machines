@@ -1,8 +1,8 @@
 import type { Getter, WritableAtom } from 'jotai/vanilla'
 
-import { type RestrictedSetter, coreMachineAtom } from './coreMachineAtom.ts'
-import type { Tags } from './tags.ts'
-import type { Init } from './utils/init.ts'
+import { type RestrictedSetter, coreMachineAtom } from './coreMachineAtom'
+import type { Tags } from './tags'
+import type { Init } from './utils/init'
 
 export function modalMachineAtom<Event, State, Result = State>(
 	init: Init<Tags<State>>,

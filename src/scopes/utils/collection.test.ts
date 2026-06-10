@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 
-import { clearCollectionEntries, collection } from './collection.ts'
+import { clearCollectionEntries, collection } from './collection'
 
 describe('collection', () => {
 	it('should create and retrieve items', () => {

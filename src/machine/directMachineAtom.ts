@@ -1,8 +1,8 @@
 import type { Getter, WritableAtom } from 'jotai/vanilla'
 
-import { type RestrictedSetter, coreMachineAtom } from './coreMachineAtom.ts'
-import type { Init } from './utils/init.ts'
-import { merge } from './utils/merge.ts'
+import { type RestrictedSetter, coreMachineAtom } from './coreMachineAtom'
+import type { Init } from './utils/init'
+import { merge } from './utils/merge'
 
 export function directMachineAtom<E, S extends object, R = S>(
 	init: Init<S>,

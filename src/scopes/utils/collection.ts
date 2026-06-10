@@ -1,4 +1,4 @@
-import { getHash } from './getHash.ts'
+import { getHash } from './getHash'
 
 export type Teardown = (() => void) | void
 export type OnMount = () => Teardown

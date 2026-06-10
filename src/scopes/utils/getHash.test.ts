@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { getHash } from './getHash.ts'
+import { getHash } from './getHash'
 
 describe('objects/hash', () => {
 	it('generates consistent hash for objects with different key order', () => {

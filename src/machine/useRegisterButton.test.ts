@@ -1,8 +1,8 @@
 import * as jotai from 'jotai'
 import { describe, expect, test, vi } from 'vite-plus/test'
 
-import { coreMachineAtom } from './coreMachineAtom.ts'
-import { useRegisterButton } from './useRegisterButton.ts'
+import { coreMachineAtom } from './coreMachineAtom'
+import { useRegisterButton } from './useRegisterButton'
 
 // Mock jotai hooks since react is not installed in the workspace environment.
 // This allows us to unit test the hook's logic directly.
