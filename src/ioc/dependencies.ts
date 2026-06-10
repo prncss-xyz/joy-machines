@@ -2,8 +2,8 @@ import { atom, type Atom, type WritableAtom } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
 import type { ReactNode } from 'react'
 
-import { cached } from './utils/cached.ts'
-import type { Prettify } from './utils/types.ts'
+import { cached } from '../utils/cached.ts'
+import type { Prettify } from '../utils/types.ts'
 
 export function dependencies<O>() {
 	type T = Prettify<{

@@ -10,7 +10,6 @@ export function clearCollectionEntries(filter: (u: unknown) => boolean) {
 	clearCollectionEntriesCallbacks.forEach((clear) => clear(filter))
 }
 
-// TODO: make this more inference friendly
 export interface ScopeOpts<Key, Payload, Encoded> {
 	hydrate?: {
 		decode: (value: Encoded, key: Key) => Payload

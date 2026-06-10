@@ -1,7 +1,7 @@
-import type { WritableAtom } from 'jotai/vanilla'
+import type { Getter, WritableAtom } from 'jotai/vanilla'
 
-import type { Tags } from '../tags.ts'
-import { type Read, type Write, coreMachineAtom } from './coreMachineAtom.ts'
+import { type RestrictedSetter, coreMachineAtom } from './coreMachineAtom.ts'
+import type { Tags } from './tags.ts'
 import type { Init } from './utils/init.ts'
 
 export function modalMachineAtom<Event, State, Result = State>(
@@ -11,14 +11,14 @@ export function modalMachineAtom<Event, State, Result = State>(
 			[E in keyof Event]: (
 				event: Event[E],
 				state: State[S],
-				get: Read,
-				set: Write,
+				get: Getter,
+				set: RestrictedSetter,
 			) => Tags<State> | null | undefined | void
 		}>
 	},
 	opts?: {
 		result?: {
-			[S in keyof State]: (state: State[S], get: Read) => Result
+			[S in keyof State]: (state: State[S], get: Getter) => Result
 		}
 		factory?: (
 			value: Tags<State>,

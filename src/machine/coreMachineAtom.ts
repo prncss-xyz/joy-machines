@@ -1,18 +1,16 @@
-import { type Atom, type WritableAtom, atom } from 'jotai/vanilla'
+import { type Atom, type Getter, type WritableAtom, atom } from 'jotai/vanilla'
 
-import type { Tags } from '../tags.ts'
-import { id } from './utils/id.ts'
+import { id } from '../utils/id.ts'
+import { noop } from '../utils/noop.ts'
+import type { Tags } from './tags.ts'
 import { type Init, fromInit } from './utils/init.ts'
-import { noop } from './utils/noop.ts'
 import { type Sendable, fromSendable } from './utils/sendable.ts'
 
 // this is a restricted version of Jotai's
-export type Write = <Args extends any[]>(
+export type RestrictedSetter = <Args extends any[]>(
 	a: WritableAtom<any, Args, any>,
 	...args: Args
 ) => void
-
-export type Read = <Value>(atom: Atom<Value>) => Value
 
 /**
  * @template E - event object
@@ -25,9 +23,9 @@ export type Read = <Value>(atom: Atom<Value>) => Value
  */
 export function coreMachineAtom<E, S, R = S>(
 	init: Init<S>,
-	transition: (e: Tags<E>, s: S, read: Read, write: Write) => S,
+	transition: (e: Tags<E>, s: S, read: Getter, write: RestrictedSetter) => S,
 	opts?: {
-		result?: (s: S, read: Read) => R
+		result?: (s: S, read: Getter) => R
 		factory?: (value: S) => WritableAtom<S, [S], any>
 	},
 ): WritableAtom<R, [e: Sendable<E>], void> & {

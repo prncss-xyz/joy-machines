@@ -1,6 +1,6 @@
-import type { WritableAtom } from 'jotai/vanilla'
+import type { Getter, WritableAtom } from 'jotai/vanilla'
 
-import { type Read, type Write, coreMachineAtom } from './coreMachineAtom.ts'
+import { type RestrictedSetter, coreMachineAtom } from './coreMachineAtom.ts'
 import type { Init } from './utils/init.ts'
 import { merge } from './utils/merge.ts'
 
@@ -10,12 +10,12 @@ export function directMachineAtom<E, S extends object, R = S>(
 		[K in keyof E]: (
 			payload: E[K],
 			state: S,
-			get: Read,
-			set: Write,
+			get: Getter,
+			set: RestrictedSetter,
 		) => Partial<S> | null | undefined | void
 	},
 	opts?: {
-		result?: (state: S, read: Read) => R
+		result?: (state: S, read: Getter) => R
 		factory?: (value: S) => WritableAtom<S, [S], any>
 	},
 ) {

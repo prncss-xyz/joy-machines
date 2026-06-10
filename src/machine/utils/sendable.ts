@@ -1,4 +1,4 @@
-import { PAYLOAD, TYPE, type Tags } from '../../tags.ts'
+import { PAYLOAD, TYPE, type Tags } from '../tags.ts'
 import type { Prettify } from '../../utils/types.ts'
 
 export type KeysOfVoid<T> = {
