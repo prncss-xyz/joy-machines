@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vite-plus/test'
-
 import { getHash } from './getHash'
 
 describe('objects/hash', () => {

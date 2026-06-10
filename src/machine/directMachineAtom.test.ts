@@ -1,5 +1,4 @@
 import { atom, createStore } from 'jotai/vanilla'
-import { describe, expect, test } from 'vite-plus/test'
 
 import { directMachineAtom } from './directMachineAtom'
 

@@ -1,5 +1,4 @@
 import { createStore, atom } from 'jotai'
-import { describe, expect, test } from 'vite-plus/test'
 
 import { createSubject } from './subject'
 

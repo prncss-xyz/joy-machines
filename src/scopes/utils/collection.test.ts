@@ -1,5 +1,3 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
-
 import { clearCollectionEntries, collection } from './collection'
 
 describe('collection', () => {

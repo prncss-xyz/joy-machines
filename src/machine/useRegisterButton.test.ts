@@ -1,5 +1,4 @@
 import * as jotai from 'jotai'
-import { describe, expect, test, vi } from 'vite-plus/test'
 
 import { coreMachineAtom } from './coreMachineAtom'
 import { useRegisterButton } from './useRegisterButton'

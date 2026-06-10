@@ -1,5 +1,4 @@
 import { createStore, atom, type Atom, type WritableAtom } from 'jotai'
-import { describe, expect, it } from 'vite-plus/test'
 
 import { dependencies } from './dependencies'
 
