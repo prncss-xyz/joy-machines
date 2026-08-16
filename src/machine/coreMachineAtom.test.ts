@@ -56,6 +56,34 @@ describe('core machine', () => {
 		expect(store.get(sideEffectAtom)).toBe('triggered')
 	})
 
+	test('calls onChange with the previous and next state', () => {
+		const store = createStore()
+		const sideEffectAtom = atom('initial')
+		const changes: Array<{
+			next: 'idle' | 'running'
+			last: 'idle' | 'running'
+		}> = []
+		type E = { START: void }
+		const o = coreMachineAtom<E, 'idle' | 'running'>(
+			'idle',
+			(e, state) => {
+				if (e.type === 'START') return 'running'
+				return state
+			},
+			{
+				onChange: (next, last, _get, set) => {
+					changes.push({ last, next })
+					set(sideEffectAtom, `${last}->${next}`)
+				},
+			},
+		)
+
+		store.set(o, 'START')
+
+		expect(changes).toEqual([{ last: 'idle', next: 'running' }])
+		expect(store.get(sideEffectAtom)).toBe('idle->running')
+	})
+
 	test('next helper returns predicted next state or return value', () => {
 		const store = createStore()
 		const sideEffectAtom = atom('initial')

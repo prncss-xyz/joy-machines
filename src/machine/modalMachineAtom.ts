@@ -1,3 +1,4 @@
+import type { Setter } from 'jotai'
 import type { Getter, WritableAtom } from 'jotai/vanilla'
 
 import { type RestrictedSetter, coreMachineAtom } from './coreMachineAtom'
@@ -23,6 +24,12 @@ export function modalMachineAtom<Event, State, Result = State>(
 		factory?: (
 			value: Tags<State>,
 		) => WritableAtom<Tags<State>, [Tags<State>], any>
+		onChange?: (
+			next: Tags<State>,
+			last: Tags<State>,
+			get: Getter,
+			set: Setter,
+		) => void
 	},
 ) {
 	const { result, factory } = opts ?? {}

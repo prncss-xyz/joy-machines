@@ -1,3 +1,4 @@
+import type { Setter } from 'jotai'
 import type { Getter, WritableAtom } from 'jotai/vanilla'
 
 import { type RestrictedSetter, coreMachineAtom } from './coreMachineAtom'
@@ -17,6 +18,7 @@ export function directMachineAtom<E, S extends object, R = S>(
 	opts?: {
 		result?: (state: S, read: Getter) => R
 		factory?: (value: S) => WritableAtom<S, [S], any>
+		onChange?: (next: S, last: S, get: Getter, set: Setter) => void
 	},
 ) {
 	return coreMachineAtom<E, S, R>(

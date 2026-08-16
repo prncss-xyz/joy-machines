@@ -1,3 +1,4 @@
+import type { Setter } from 'jotai'
 import { type Atom, type Getter, type WritableAtom, atom } from 'jotai/vanilla'
 
 import { id } from '@/utils/id'
@@ -18,8 +19,8 @@ export type RestrictedSetter = <Args extends any[]>(
  * @template S - state
  * @template R - result
  * @param init - initial state
- * @param transition - transition function
- * @param result - optional result function
+ * @param transition
+ * @param option
  * @returns machine atom
  */
 export function coreMachineAtom<E, S, R = S>(
@@ -28,6 +29,7 @@ export function coreMachineAtom<E, S, R = S>(
 	opts?: {
 		result?: (s: S, read: Getter) => R
 		factory?: (value: S) => WritableAtom<S, [S], any>
+		onChange?: (next: S, last: S, get: Getter, set: Setter) => void
 	},
 ): WritableAtom<R, [e: Sendable<E>], void> & {
 	next: (e: Sendable<E>) => Atom<R>
@@ -37,8 +39,12 @@ export function coreMachineAtom<E, S, R = S>(
 	const state = factory(fromInit(init))
 	const machine: any = atom(
 		(get) => result(get(state), get),
-		(get, set, e: Sendable<E>) =>
-			set(state, transition(fromSendable(e), get(state), get, set)),
+		(get, set, e: Sendable<E>) => {
+			const last = get(state)
+			const next = transition(fromSendable(e), last, get, set)
+			set(state, next)
+			opts?.onChange?.(next, last, get, set)
+		},
 	)
 	machine.can = (e: Sendable<E>) =>
 		atom((get) => {
