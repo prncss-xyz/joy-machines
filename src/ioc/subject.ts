@@ -11,45 +11,66 @@ export function createSubject<M>(
 		fn: (message: M) => any
 	}
 
-	const listenersMap = new WeakMap<
-		WritableAtom<any, [any], any>,
-		ListenerEntry
-	>()
-	const listenersSet = new Set<ListenerEntry>()
-
-	const registry = new FinalizationRegistry<ListenerEntry>((entry) => {
-		listenersSet.delete(entry)
-	})
-
-	function listen<A = M>(
-		a: WritableAtom<any, [A], any>,
-		fn: (message: M) => A = id as never,
-	) {
-		const existing = listenersMap.get(a)
-		if (existing) {
-			existing.fn = fn
-		} else {
-			const entry: ListenerEntry = {
-				fn,
-				ref: new WeakRef(a),
-			}
-			listenersMap.set(a, entry)
-			listenersSet.add(entry)
-			registry.register(a, entry)
-		}
+	type Listeners = {
+		map: WeakMap<WritableAtom<any, [any], any>, ListenerEntry>
+		set: Set<ListenerEntry>
+		registry: FinalizationRegistry<ListenerEntry>
 	}
 
-	const subject = atom<never, [M], void>(0 as never, (get, set, message) => {
+	const listenersAtom = atom<Listeners | undefined>(undefined)
+
+	const getListeners = (get: Getter, set: Setter) => {
+		const existing = get(listenersAtom)
+		if (existing) return existing
+
+		const listeners = {
+			map: new WeakMap<WritableAtom<any, [any], any>, ListenerEntry>(),
+			registry: undefined as never as FinalizationRegistry<ListenerEntry>,
+			set: new Set<ListenerEntry>(),
+		}
+		listeners.registry = new FinalizationRegistry((entry) =>
+			listeners.set.delete(entry),
+		)
+		set(listenersAtom, listeners)
+		return listeners
+	}
+
+	const listenAtom = atom(
+		null,
+		(
+			get: Getter,
+			set: Setter,
+			a: WritableAtom<any, [any], any>,
+			fn: (message: M) => any = id,
+		) => {
+			const listeners = getListeners(get, set)
+			const existing = listeners.map.get(a)
+			if (existing) {
+				existing.fn = fn
+			} else {
+				const entry: ListenerEntry = {
+					fn,
+					ref: new WeakRef(a),
+				}
+				listeners.map.set(a, entry)
+				listeners.set.add(entry)
+				listeners.registry.register(a, entry)
+			}
+		},
+	)
+
+	const subjectAtom = atom(null, (get, set, message: M) => {
+		const listeners = getListeners(get, set)
 		let pristine = true
-		for (const entry of listenersSet) {
+		for (const entry of listeners.set) {
 			const a = entry.ref.deref()
 			if (a) {
 				set(a, entry.fn(message))
 				pristine = false
-			} else listenersSet.delete(entry)
+			} else listeners.set.delete(entry)
 		}
 		if (pristine) onNoListeners(get, set, message)
 	})
 
-	return [listen, subject] as const
+	return [listenAtom, subjectAtom] as const
 }
